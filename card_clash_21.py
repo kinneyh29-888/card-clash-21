@@ -1,3 +1,4 @@
+print("Game Start.")
 import random 
 # Global Configurations
 suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
@@ -10,25 +11,19 @@ values = {
     "Jack": 10, "Queen": 10, "King": 10, "Ace" : 11
 }
 
-Print("Game Start.")
-
-"""Returns a list of 52 tuples representing a standard deck:
-(rank, suit)"""
 def create_deck():
-    ranks for suits in range(52):
-
-print(create_deck)
-
-"""Shuffles the deck list in-place."""
+    deck = [(rank, suit) for rank in ranks for suit in suits]
+    
 def shuffle_deck(deck):
-    deck.random()
+    random.shuffle(deck)
+    player_card = [deck.pop(), deck.pop()]
+    dealer_card = [deck.pop(), deck.pop()]
+def deal_card(deck):
+    print(player_card)
     
-"""Calculates the total value of cards in a hand.
-Requirement: If the score is over 21 and the hand comntains an Ace,
-reduce the score by 10 until the score is <=21 or no Aces remain."""
-def calculate_score(hand):
-    if 
-    
+create_deck()
+shuffle_deck(deck)
+deal_card(deck)
 
 
 
