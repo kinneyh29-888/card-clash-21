@@ -63,26 +63,29 @@ while True:
     player_score = sum(card_values[card[0]] for card in player_card)
     
     
-    
+    # Checking score again ??
     if player_score > 21:
         print("\nDealer has cards: ", dealer_card)
         dealer_score = sum(card_values[card[0]] for card in dealer_card)
         print("Dealer score: ", dealer_score)
         
-        #
+        # If yes looping again
         play_again = input("\nPlay again? (yes/no): ").lower()
         if play_again != "yes":
             break
         else:
             continue
 
+    # Dealers turn after breaking
     print("\nDealer's turn...")
     dealer_score = sum(card_values[card[0]] for card in dealer_card)
 
     print("Dealer has cards: ", dealer_card)
     print("Dealer score: ", dealer_score)
 
-    while dealer_score < 18:
+    # Dealer stops hitting when reaches 16
+    # If not over 16 dealer recieves card and its added to score
+    while dealer_score < 17:
         new_card = deck.pop()
         dealer_card.append(new_card)
         dealer_score = sum(card_values[card[0]] for card in dealer_card)
@@ -90,11 +93,13 @@ while True:
         print("\nDealer pulled: ", new_card)
         print("Dealer has cards: ", dealer_card)
         print("Dealer score: ", dealer_score)
-
+        
+        # Dealer score over 21, player wins, game ends
         if dealer_score > 21:
             print("\nDealer busts! Player wins.")
             break
-
+    
+    # Higher score wins or tie
     if dealer_score <= 21:
         if player_score > dealer_score:
             print("\nPlayer wins.")
@@ -102,11 +107,13 @@ while True:
             print("\nDealer wins.")
         else:
             print("\nIts a tie.")
-
+            
+    # Printing final scores
     print("\nFinal Scores:")
     print("Player:", player_card, "Score:", player_score)
     print("Dealer:", dealer_card, "Score:", dealer_score)
-
+    
+    # Play again if full game
     play_again = input("\nPlay again? (yes/no): ").lower()
     if play_again != "yes":
         print("End Game.")
