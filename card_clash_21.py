@@ -10,96 +10,153 @@ card_values = {
     "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
     "Jack": 10, "Queen": 10, "King": 10, "Ace": 11
 }
-# Function creates deck and return value
+
+#Creating deck and returning
 def create_deck():
     deck = [(rank, suit) for rank in ranks for suit in suits]
     return deck
 
-# Function shuffles deck and deals player and dealer card 
+#Shuffling deck
 def shuffle_deck(deck):
     random.shuffle(deck)
+
+#Pops off cards for dealer and player, stores in variables
+def deal_cards(deck):
     player_card = [deck.pop(), deck.pop()]
     dealer_card = [deck.pop(), deck.pop()]
     return player_card, dealer_card
 
-# Loops for rounds
+# Player score when recieving ace
+# Player chooses if 1 or 11
+def calculate_player_score(cards):
+    score = 0
+
+    for i in range(len(cards)):
+        card = cards[i]
+
+        rank = card[0]
+        suit = card[1]
+
+        if rank != "Ace":
+            score += card_values[rank]
+        else:
+            
+            if len(card) == 3:
+                score += card[2]
+            else:
+                #Choosing 11 or 1
+                while True:
+                    choice = input("You got an Ace! Count it as 1 or 11? ")
+                    if choice == "1":
+                        value = 1
+                        break
+                    elif choice == "11":
+                        value = 11
+                        break
+                    #Invalid Option
+                    else:
+                        print("Invalid choice. Please enter 1 or 11.")
+
+                # Store value in card
+                cards[i] = (rank, suit, value)
+                score += value
+
+    return score
+
+# Dealer score, ace will auto adust
+def calculate_dealer_score(cards):
+    score = sum(card_values[card[0]] for card in cards)
+    ace_count = sum(1 for card in cards if card[0] == "Ace")
+
+    while score > 21 and ace_count > 0:
+        score -= 10
+        ace_count -= 1
+
+    return score
+
+
 while True:
     deck = create_deck()
-    player_card, dealer_card = shuffle_deck(deck)
+    shuffle_deck(deck)
+    player_card, dealer_card = deal_cards(deck)
 
     while True:
-        
-        #Total score of the player cards
-        player_score = sum(card_values[card[0]] for card in player_card)
-        
-        #Prints when hit
+        # Prints cards before score
         print("\nPlayer has cards: ", player_card)
+
+        # Calculates score (Player will see cards before choosing ace 1 or 11)
+        player_score = calculate_player_score(player_card)
         print("Player score: ", player_score)
+
+        # Automatic win if player hits 21
+        if player_score == 21:
+            print("Player hits 21!")
+            break
         
-        #Game ends when score over 21
+        # Automatic loss if player is over 21
         if player_score > 21:
             print("Player busts! Dealer wins.")
             break
 
-        choice = input('Hit (add card) or bust (turn over): ').lower()
+        choice = input('Hit or stand: ').lower()
         
-        #New card, add to score, and print card
+        # Player chooses hit and gains a new card
+        # New card is printed
         if choice == "hit":
             new_card = deck.pop()
             player_card.append(new_card)
             print("Player pulled a: ", new_card)
         
-        # End player turn if player bust
-        elif choice == "bust":
+        # Ends player turn if chooses stand
+        elif choice == "stand":
             break
         
-        
-        # Invalid inputs
+        #Invalid Choice
         else:
             print("Invalid choice. Please try again.")
             continue
-    
-    # Add up score after either hit or bust 
-    player_score = sum(card_values[card[0]] for card in player_card)
-    
-    
-    # Checking score again ??
+
+    player_score = calculate_player_score(player_card)
+
+    # Final print (all scores) when player busts
     if player_score > 21:
         print("\nDealer has cards: ", dealer_card)
-        dealer_score = sum(card_values[card[0]] for card in dealer_card)
+        dealer_score = calculate_dealer_score(dealer_card)
         print("Dealer score: ", dealer_score)
         
-        # If yes looping again
+        #Option to play again
         play_again = input("\nPlay again? (yes/no): ").lower()
         if play_again != "yes":
             break
         else:
             continue
 
-    # Dealers turn after breaking
+    # When player breaks or turn is over
+    # Calculating deal score 
     print("\nDealer's turn...")
-    dealer_score = sum(card_values[card[0]] for card in dealer_card)
-
+    dealer_score = calculate_dealer_score(dealer_card)
+    
+    # Shows dealer cards and score
     print("Dealer has cards: ", dealer_card)
     print("Dealer score: ", dealer_score)
 
-    # Dealer stops hitting when reaches 16
-    # If not over 16 dealer recieves card and its added to score
+    # Dealer pulls new card when scores under 17, new card is added to score
     while dealer_score < 17:
         new_card = deck.pop()
         dealer_card.append(new_card)
-        dealer_score = sum(card_values[card[0]] for card in dealer_card)
-
+        dealer_score = calculate_dealer_score(dealer_card)
+        
+        # Showing new card, new hand, and score
         print("\nDealer pulled: ", new_card)
         print("Dealer has cards: ", dealer_card)
         print("Dealer score: ", dealer_score)
-        
-        # Dealer score over 21, player wins, game ends
+
+        # Player wins when dealer busts
         if dealer_score > 21:
             print("\nDealer busts! Player wins.")
             break
-    
-    # Higher score wins or tie
+
+    # Calculating who wins and printing
     if dealer_score <= 21:
         if player_score > dealer_score:
             print("\nPlayer wins.")
@@ -107,22 +164,16 @@ while True:
             print("\nDealer wins.")
         else:
             print("\nIts a tie.")
-            
-    # Printing final scores
-    print("\nFinal Scores:")
+    
+    #Final hands, final scores
+    print("\nFinal Hands:")
     print("Player:", player_card, "Score:", player_score)
     print("Dealer:", dealer_card, "Score:", dealer_score)
     
-    # Play again if full game
+    # Playing again
+    # If yes, repeats
+    # if no, prints goodbye
     play_again = input("\nPlay again? (yes/no): ").lower()
     if play_again != "yes":
-        print("End Game.")
+        print("Thanks for playing!")
         break
-
-
-
-
-
-
-
-    
